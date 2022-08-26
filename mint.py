@@ -38,25 +38,28 @@ def start_driver():
     driver = webdriver.Chrome(options=firefox_options, service = ser)
     driver.implicitly_wait(IMPLICIT_WAIT)
     
-    driver.get('https://sclens.corp.amazon.com/')
+    driver.get('https://denali-website-na.aka.amazon.com/item-refresh')
     input('Logged In? Press enter to continue...\r\n')
     return driver
     
 def main():
     driver = start_driver()
     driver.get('https://denali-website-na.aka.amazon.com/item-refresh')
-    input('Press enter after logging in... ')
-    els = driver.find_elements('css selector', '.css-ackcql')
-    try: el = els[0].find_element('tag name', 'input')
-    except: 
-        print('oops, cannot find element!')
-        exit()
+    # input('Press enter after logging in... ')
+    # els = driver.find_elements('css selector', '.css-ackcql')
+    # try: el = els[0].find_element('tag name', 'input')
+    # except: 
+        # print('oops, cannot find element!')
+        # exit()
     
     skus = get_list()
     
     # diving in batches of 30
     batches = [skus[i:i+BATCH_SIZE] for i in range(0,len(skus),BATCH_SIZE)]
     for batch in batches:
+        el = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//div[@class=' css-ackcql']/input"))
+        )
         for sku in batch:
             el.send_keys(sku + ' ') # Writing sku code in the text field and adding a space to separate
         time.sleep(.3)
