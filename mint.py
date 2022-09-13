@@ -20,10 +20,11 @@ BATCH_SIZE = 30 # This can't be higher than 20
 def get_list():
     # Import seller list from csv file 
     l = []
-    with open('list.csv', newline='') as f:
-        for row in csv.reader(f):
-            l.append(row[0])
-        return l
+    with open('list.csv', 'rb') as f:
+        for line in f:
+            if len(line) > 0: 
+                l.append(line.rstrip().decode('utf-8'))
+    return l
 
 def start_driver():
     # Defining Firefox Driver Configs
@@ -43,6 +44,10 @@ def start_driver():
     return driver
     
 def main():
+
+    skus = get_list()
+    print(skus)
+
     driver = start_driver()
     driver.get('https://denali-website-na.aka.amazon.com/item-refresh')
     # input('Press enter after logging in... ')
@@ -51,8 +56,6 @@ def main():
     # except: 
         # print('oops, cannot find element!')
         # exit()
-    
-    skus = get_list()
     
     # diving in batches of 30
     batches = [skus[i:i+BATCH_SIZE] for i in range(0,len(skus),BATCH_SIZE)]
